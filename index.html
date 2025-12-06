@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>VoteNow — Plateforme de vote en ligne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Application de vote sécurisée avec gestion des candidats et résultats en temps réel.">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>🗳️</text></svg>">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="header-content">
+        <h1>🗳️ VoteNow</h1>
+        <p>Plateforme de vote sécurisée</p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="nav-tabs">
+    <div class="container">
+      <button class="tab-btn active" data-tab="vote">✏️ Vote</button>
+      <button class="tab-btn" data-tab="results">📊 Résultats</button>
+      <button class="tab-btn" data-tab="candidates">👥 Voir les candidats</button>
+      <button class="tab-btn" data-tab="admin">⚙️ Administration</button>
+    </div>
+  </nav>
+
+  <main class="container">
+    <!-- Section Vote -->
+    <section id="tab-vote" class="tab active">
+      <div class="section-header">
+        <h2>Voter</h2>
+        <p>Inscrivez-vous pour obtenir votre identifiant de vote, puis votez</p>
+      </div>
+
+      <!-- Formulaire d'inscription -->
+      <form id="voterRegistrationForm" class="card">
+        <h3>📝 Inscription votant</h3>
+        <div class="form-group">
+          <label for="voterFirstname">Prénom *</label>
+          <input id="voterFirstname" type="text" required placeholder="Ex: Jean" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="voterLastname">Nom *</label>
+          <input id="voterLastname" type="text" required placeholder="Ex: Dupont" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="voterIne">Numéro INE *</label>
+          <input id="voterIne" type="text" required placeholder="Ex: 123456789" autocomplete="off">
+          <small>Numéro d'étudiant ou d'identification unique</small>
+        </div>
+        <button type="submit" class="btn btn-primary">S'inscrire et obtenir mon identifiant</button>
+        <p id="voterRegistrationMsg" class="message"></p>
+      </form>
+
+      <!-- Affichage de l'identifiant généré -->
+      <div id="voterIdentifierDisplay" class="hidden"></div>
+
+      <!-- Formulaire de vote -->
+      <form id="voteForm" class="card">
+        <h3>🗳️ Sélectionnez votre candidat</h3>
+        
+        <div class="form-group">
+          <label for="voteIdentifierId">Votre identifiant de vote *</label>
+          <input 
+            id="voteIdentifierId" 
+            type="text" 
+            readonly
+            placeholder="Sera généré après votre inscription"
+            autocomplete="off">
+          <small>Cet identifiant a été généré lors de votre inscription (lecture seule)</small>
+        </div>
+
+        <div class="form-group">
+          <label>Candidats disponibles *</label>
+          <div id="candidateListVote" class="candidate-list"></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">📮 Voter maintenant</button>
+        <p id="voteMsg" class="message"></p>
+      </form>
+    </section>
+
+    <!-- Section Résultats -->
+    <section id="tab-results" class="tab">
+      <div class="section-header">
+        <h2>Résultats du vote</h2>
+        <p>Consultez les résultats en temps réel</p>
+      </div>
+
+      <div class="results-container">
+        <div class="card">
+          <h3>🏆 Gagnant provisoire</h3>
+          <div id="winnerBox"></div>
+        </div>
+
+        <div class="card">
+          <h3>📋 Tableau des résultats</h3>
+          <div id="resultsTable"></div>
+          <p id="voteCount" style="text-align: center; margin-top: 16px; font-weight: 600;"></p>
+        </div>
+
+        <div class="card">
+          <h3>📊 Graphique des votes</h3>
+          <div id="barChart"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section Voir les candidats -->
+    <section id="tab-candidates" class="tab">
+      <div class="container">
+        <div class="section-header">
+          <h2>👥 Tous les candidats</h2>
+          <p>Consultez les projets de tous les candidats</p>
+        </div>
+        <div id="candidatesPageList" class="candidate-list"></div>
+      </div>
+    </section>
+
+    <!-- Section Administration -->
+    <section id="tab-admin" class="tab">
+      <div class="section-header">
+        <h2>Administration</h2>
+        <p>Gestion des candidats et contrôle du vote</p>
+      </div>
+
+      <!-- Formulaire de connexion admin -->
+      <div id="admin-login" class="card">
+        <h3>🔐 Connexion Administrateur</h3>
+        <form id="admin-login-form">
+          <div class="form-group">
+            <label for="admin-id">Identifiant *</label>
+            <input id="admin-id" type="text" required placeholder="Ex: admin01" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="admin-code">Code d'accès *</label>
+            <input id="admin-code" type="password" required placeholder="••••••" autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-primary">Se connecter</button>
+          <p id="admin-login-message" class="message"></p>
+        </form>
+      </div>
+
+      <!-- Panneau admin -->
+      <div id="admin-panel" class="hidden">
+        <div class="admin-header card" style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="admin-info-content">
+            <p id="admin-info" style="margin: 0; font-weight: 600;"></p>
+          </div>
+          <button id="admin-logout" class="btn btn-danger">Déconnexion</button>
+        </div>
+
+        <!-- Formulaire d'ajout de candidat -->
+        <form id="createCandidateForm" class="card">
+          <h3>➕ Ajouter un candidat</h3>
+          <div class="form-group">
+            <label for="candidateName">Nom du candidat *</label>
+            <input id="candidateName" type="text" required placeholder="Ex: Awa Diop" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="candidateSlogan">Slogan ou programme *</label>
+            <input id="candidateSlogan" type="text" required placeholder="Ex: Ensemble, on avance!" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="candidatePhotoFile">Photo du candidat (JPEG/PNG) *</label>
+            <input id="candidatePhotoFile" type="file" accept="image/jpeg,image/png,image/jpg" required>
+            <small>Sélectionnez une photo depuis votre ordinateur</small>
+          </div>
+          <div class="form-group">
+            <label for="candidatePdfFile">Projet (PDF) *</label>
+            <input id="candidatePdfFile" type="file" accept="application/pdf" required>
+            <small>Sélectionnez un fichier PDF depuis votre ordinateur</small>
+          </div>
+          <button type="submit" class="btn btn-primary">Ajouter le candidat</button>
+          <p id="adminMsg" class="message"></p>
+        </form>
+
+        <!-- Liste des candidats admin -->
+        <div class="card">
+          <h3>📋 Candidats enregistrés</h3>
+          <div id="candidateListAdmin"></div>
+        </div>
+
+        <!-- Modal d'édition candidat -->
+        <div id="editCandidateModal" class="hidden pdf-modal" aria-hidden="true">
+          <div class="pdf-modal-content card">
+            <button id="editCloseBtn" class="btn btn-danger" style="position: absolute; top: 12px; right: 12px;" aria-label="Fermer">✖</button>
+            <h3 style="margin-bottom: 20px;">✏️ Modifier le candidat</h3>
+            
+            <form id="editCandidateForm">
+              <div class="form-group">
+                <label for="editCandidateName">Nom du candidat *</label>
+                <input id="editCandidateName" type="text" required autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label for="editCandidateSlogan">Slogan ou programme *</label>
+                <input id="editCandidateSlogan" type="text" required autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label for="editCandidatePhotoFile">Photo du candidat (JPEG/PNG)</label>
+                <input id="editCandidatePhotoFile" type="file" accept="image/jpeg,image/png,image/jpg">
+                <small>Laissez vide pour garder la photo actuelle</small>
+              </div>
+              <div class="form-group">
+                <label for="editCandidatePdfFile">Projet (PDF)</label>
+                <input id="editCandidatePdfFile" type="file" accept="application/pdf">
+                <small>Laissez vide pour garder le PDF actuel</small>
+              </div>
+              <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button type="submit" class="btn btn-primary">💾 Enregistrer les modifications</button>
+                <button type="button" id="editCancelBtn" class="btn">Annuler</button>
+              </div>
+              <p id="editMsg" class="message"></p>
+            </form>
+          </div>
+        </div>
+
+        <!-- Section Contrôle des votes en direct -->
+        <div class="card" style="margin-top: 24px;">
+          <h3>🎯 Contrôle des votes en direct</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-top: 16px;">
+            <div style="background: #dbeafe; padding: 16px; border-radius: 8px; text-align: center;">
+              <p style="margin: 0 0 8px 0; color: #1e40af; font-size: 0.9rem;">Total des votes</p>
+              <h2 id="adminVoteCount" style="margin: 0; color: #2563eb;">0</h2>
+            </div>
+            <div style="background: #dbeafe; padding: 16px; border-radius: 8px; text-align: center;">
+              <p style="margin: 0 0 8px 0; color: #1e40af; font-size: 0.9rem;">Électeurs inscrits</p>
+              <h2 id="adminVoterCount" style="margin: 0; color: #2563eb;">0</h2>
+            </div>
+            <div style="background: #dbeafe; padding: 16px; border-radius: 8px; text-align: center;">
+              <p style="margin: 0 0 8px 0; color: #1e40af; font-size: 0.9rem;">Taux de participation</p>
+              <h2 id="adminParticipationRate" style="margin: 0; color: #2563eb;">0%</h2>
+            </div>
+          </div>
+          
+          <h4 style="margin-top: 20px; margin-bottom: 12px;">📊 Votes par candidat</h4>
+          <div id="adminVotesList"></div>
+
+          <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+            <button type="button" id="adminViewReportBtn" class="btn btn-primary">📄 Voir le rapport complet</button>
+            <button type="button" id="adminExportVotesBtn" class="btn btn-primary">⬇️ Exporter en HTML</button>
+            <button type="button" id="adminResetVotesBtn" class="btn btn-danger">🗑️ Réinitialiser tous les votes</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal PDF -->
+  <div id="pdfModal" class="hidden pdf-modal" aria-hidden="true">
+    <div class="pdf-modal-content card">
+      <button id="pdfCloseBtn" class="btn btn-danger" style="position: absolute; top: 12px; right: 12px;" aria-label="Fermer">✖</button>
+      <div class="pdf-viewer-wrap">
+        <iframe id="pdfViewer" src="" frameborder="0" width="100%" height="600px"></iframe>
+      </div>
+      <div style="margin-top:12px; display:flex; justify-content:space-between; gap:12px;">
+        <a id="pdfDownloadLink" class="btn btn-primary" href="#" target="_blank" rel="noopener">⬇️ Télécharger le PDF</a>
+        <button id="pdfOpenNewTab" class="btn" type="button">🔍 Ouvrir dans un nouvel onglet</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2025 <strong>VoteNow</strong> — Plateforme de vote sécurisée</p>
+      <p class="footer-note">Projet éducatif | Données stockées localement</p>
+    </div>
+  </footer>
+
+  <script src="../jss/ap.js"></script>
+</body>
+</html>
